@@ -7,14 +7,6 @@
 
 #define MAXSTRING 50
 
-typedef double (*function)(int argc, ...);
-
-typedef struct
-{
-	char name[MAXSTRING];
-	function math_func;
-} operation;
-
 double summ(int argc, ...)
 {
 	if (argc < 2)
@@ -107,15 +99,6 @@ int main()
 {
 	setlocale(LC_ALL, "Rus");
 
-	operation op[] = {
-		{"Сложение", summ},
-		{"Вычитание", diff},
-		{"Умножение", multipl},
-		{"Деление", divis}
-	};
-
-
-
 	while (1)
 	{
 		int state;
@@ -127,7 +110,25 @@ int main()
 		printf("Введите два числа через пробел: ");
 		scanf("%lf %lf", &a, &b);
 
-		printf("Результат: %lf\n\n", op[state-1].math_func(2, a, b));
+		switch (state)
+		{
+		case 1:
+			printf("Результат: %lf\n\n", summ(2, a, b));
+			break;
+		case 2:
+			printf("Результат: %lf\n\n", diff(2, a, b));
+			break;
+		case 3:
+			printf("Результат: %lf\n\n", multipl(2, a, b));
+			break;
+		case 4:
+			printf("Результат: %lf\n\n", divis(2, a, b));
+			break;
+		case 5:
+			return 0;
+		default:
+			break;
+		}
 	}
 
 	return 0;

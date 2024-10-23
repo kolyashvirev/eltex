@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿﻿#define _CRT_SECURE_NO_WARNINGS
 
 
 #include <stdio.h>
@@ -6,7 +6,6 @@
 #include <locale.h>
 
 #define MAXSTRING 50
-#define MAXARRAY 5
 
 typedef double (*function)(int argc, ...);
 
@@ -29,7 +28,7 @@ double summ(int argc, ...)
 
 
 	double res = va_arg(l, double);
-	for (int i = 1; i < argc; ++i)
+	for (int i = 0; i < argc; ++i)
 	{
 		res += va_arg(l, double);
 	}
@@ -124,54 +123,12 @@ int main()
 		scanf("%d", &state);
 		if (state == 5) return 0;
 
-		double a;
-		double arr[MAXARRAY];
+		double a, b;
+		printf("Введите два числа через пробел: ");
+		scanf("%lf %lf", &a, &b);
 
-		int n = 0;
-		printf("Сколько чисел?(не более %d): ", MAXARRAY);
-		scanf("%d", &n);
-
-
-		printf("Введите числа: ");
-
-		for (int i = 0; i < n; ++i)
-		{
-			scanf("%lf", &a);
-			arr[i] = a;
-		}
-
-		switch (n)
-		{
-		case 1:
-			printf("Результат: %lf\n\n",
-				op[state - 1].math_func(n, arr[0]));
-			break;
-
-		case 2:
-			printf("Результат: %lf\n\n",
-				op[state - 1].math_func(n, arr[0], arr[1]));
-			break;
-
-		case 3:
-			printf("Результат: %lf\n\n",
-				op[state - 1].math_func(n, arr[0], arr[1], arr[2]));
-			break;
-
-		case 4:
-			printf("Результат: %lf\n\n",
-				op[state - 1].math_func(n, arr[0], arr[1], arr[2], arr[3]));
-			break;
-
-		case 5:
-			printf("Результат: %lf\n\n",
-				op[state - 1].math_func(n, arr[0], arr[1], arr[2], arr[3], arr[4]));
-			break;
-
-		default:
-			break;
-		}
-
-
+		printf("Результат: %lf\n\n", op[state - 1].math_func(2, a, b));
 	}
+
 	return 0;
 }
