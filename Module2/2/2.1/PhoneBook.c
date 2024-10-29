@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <Windows.h>
 
 #define MAXSTRING 50
 #define BOOKVOLUME 15
