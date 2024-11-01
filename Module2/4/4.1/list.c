@@ -5,6 +5,9 @@ struct list* addContact(contact _newContact, struct list* head)
 	struct list* new;
 	new = malloc(sizeof(struct list));
 	new->value = _newContact;
+	new->next = NULL;
+	new->prev = NULL;
+	
 	printf("%s", new->value.Surname);
 	if(NULL == head)
 	{
@@ -239,7 +242,7 @@ struct list* editQuery(struct list* head)
 		{
 			printf("Имя не введено");
 		}
-		editContact(person, "%n", name);
+		editContact(curr, person, "%n", name);
 
 		break;
 	}
@@ -252,7 +255,7 @@ struct list* editQuery(struct list* head)
 		{
 			printf("Имя не введено");
 		}
-		editContact(person, "%s", surname);
+		editContact(curr, person, "%s", surname);
 
 		break;
 	}
@@ -262,7 +265,7 @@ struct list* editQuery(struct list* head)
 		char patronymic[MAXSTRING];
 		printf("Текущее отчество: %s\nВведите новое отчество: ", curr->value.Patronymic); getchar();
 		scanf("%s", &patronymic);
-		editContact(person, "%o", patronymic);
+		editContact(curr, person, "%o", patronymic);
 		break;
 	}
 
@@ -271,7 +274,7 @@ struct list* editQuery(struct list* head)
 		char jobPlace[MAXSTRING];
 		printf("Текущее место работы: %s\nВведите новое место работы: ", curr->value.JobPlace); getchar();
 		scanf("%s", &jobPlace);
-		editContact(person, "%p", jobPlace);
+		editContact(curr, person, "%p", jobPlace);
 		break;
 	}
 
@@ -280,7 +283,7 @@ struct list* editQuery(struct list* head)
 		char jobTitle[MAXSTRING];
 		printf("Текущее место работы: %s\nВведите новое место работы: ", curr->value.JobTitle); getchar();
 		scanf("%s", &jobTitle);
-		editContact(person, "%t", jobTitle);
+		editContact(curr, person, "%t", jobTitle);
 		break;
 	}
 
@@ -304,7 +307,7 @@ struct list* editQuery(struct list* head)
 		fgets(TG, MAXSTRING, stdin);
 		TG[strcspn(TG, "\n")] = '\0';
 
-		editContact(person, "%w", FB, VK, OK, inst, TG);
+		editContact(curr, person, "%w", FB, VK, OK, inst, TG);
 
 		break;
 	}
@@ -323,7 +326,7 @@ struct list* editQuery(struct list* head)
 		}
 		for (int j = n; j < MAXPHONES; ++j) strcpy(ph[j], "\0");
 
-		editContact(person, "%h", ph);
+		editContact(curr, person, "%h", ph);
 		break;
 	}
 
@@ -340,7 +343,7 @@ struct list* editQuery(struct list* head)
 		}
 		for (int j = n; j < MAXEMAILS; ++j) strcpy(em[j], "\0");
 
-		editContact(person, "%e", em);
+		editContact(curr, person, "%e", em);
 		break;
 	}
 
