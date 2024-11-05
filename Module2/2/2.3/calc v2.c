@@ -76,7 +76,7 @@ double divis(int argc, ...)
 	for (int i = 0; i < argc; ++i)
 	{
 		int temp = va_arg(l, double);
-		if (temp != 0) res /= va_arg(l, double);
+		if (temp != 0) res /= temp;
 	}
 
 	va_end(l);
