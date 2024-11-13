@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <fcntl.h>
 
 #define MAXSTRING 50
 #define BOOKVOLUME 15
@@ -62,8 +63,6 @@ int main()
 {
 	setlocale(LC_ALL, "ru");
     loadContacts();
-
-    //_setmode(_fileno(stdout), _O_U16TEXT);
 
 	int choice;
 
@@ -485,46 +484,30 @@ int displayNames()
 
 int saveContacts()
 {
-    FILE *file = fopen(FILENAME, "w");
-    if (file == NULL) {
-        printf("Ошибка при открытии файла для записи.\n");
-        return -1;
+    int file = open(FILENAME, O_RDWR);
+    if (file == -1) {
+        perror("Ошибка при открытии файла для записи.\n");
+		exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < volume; i++) {
-        fprintf(file, "%s %s %s %s %s\n", PhoneBook[i].Surname, PhoneBook[i].Name, PhoneBook[i].Patronymic, PhoneBook[i].JobPlace, PhoneBook[i].JobTitle);
-        for (int j = 0; j < MAXPHONES; j++) {
-            fprintf(file, "%s\n", PhoneBook[i].PhonesNumber[j]);
-        }
-        for (int j = 0; j < MAXEMAILS; j++) {
-            fprintf(file, "%s\n", PhoneBook[i].EMail[j]);
-        }
-        fprintf(file, "%s %s %s %s %s\n", PhoneBook[i].Networks.FB, PhoneBook[i].Networks.VK, PhoneBook[i].Networks.OK, PhoneBook[i].Networks.inst, PhoneBook[i].Networks.TG);
-    }
+	write(file, &volume, sizeof(int));
+	write(file, PhoneBook, sizeof(contact) * volume);
 
-    fclose(file);
+    close(file);
     return 0;
 }
 
 int loadContacts()
 {
-    FILE *file = fopen(FILENAME, "r");
-    if (file == NULL) {
-        printf("Файл не найден, создается новый.\n");
-        return 0; // Если файл не найден, просто продолжаем
+    int file = open(FILENAME, O_RDWR | O_CREAT, S_IRWXU | S_IRWXG);
+    if (file == -1) {
+		perror("Ошибка открытия файла");
+        exit(EXIT_FAILURE);
     }
 
-    while (fscanf(file, "%s %s %s %s %s", PhoneBook[volume].Surname, PhoneBook[volume].Name, PhoneBook[volume].Patronymic, PhoneBook[volume].JobPlace, PhoneBook[volume].JobTitle) != EOF) {
-        for (int i = 0; i < MAXPHONES; i++) {
-            fscanf(file, "%s", PhoneBook[volume].PhonesNumber[i]);
-        }
-        for (int i = 0; i < MAXEMAILS; i++) {
-            fscanf(file, "%s", PhoneBook[volume].EMail[i]);
-        }
-        fscanf(file, "%s %s %s %s %s", PhoneBook[volume].Networks.FB, PhoneBook[volume].Networks.VK, PhoneBook[volume].Networks.OK, PhoneBook[volume].Networks.inst, PhoneBook[volume].Networks.TG);
-        volume++;
-    }
+	read(file, &volume, sizeof(int));
+	read(file, &PhoneBook, sizeof(contact) * volume);
 
-    fclose(file);
+    close(file);
     return 0;
 }
