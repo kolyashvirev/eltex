@@ -25,8 +25,16 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    signal(SIGUSR1, sig1);
-    signal(SIGUSR2, sig2);
+    if (signal(SIGUSR1, sig1) == SIG_ERR)
+    {
+        perror("Ошибка настройки сигнала");
+        exit(EXIT_FAILURE);
+    }
+    if (signal(SIGUSR2, sig2) == SIG_ERR)
+    {
+        perror("Ошибка настройки сигнала");
+        exit(EXIT_FAILURE);        
+    }
 
     pid_t pid;
     switch (pid = fork())
