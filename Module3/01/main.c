@@ -7,6 +7,12 @@ int calculate(int i)
     return i * i;
 }
 
+void printsq(char* argv[], int start, int stop)
+{
+    for(int i = start; i < stop; ++i)
+        printf("Side: %d, area: %d\n", atoi(argv[i]), calculate(atoi(argv[i])));
+}
+
 int main(int argc, char* argv[])
 {
     if(argc < 2)
@@ -18,13 +24,12 @@ int main(int argc, char* argv[])
     switch (pid = fork())
     {
     case 0:
-        for(int i = mid; i < argc; ++i)
-            printf("Side: %d, area: %d\n", atoi(argv[i]), calculate(atoi(argv[i])));
-        break;
+        printsq(argv, mid, argc);
+        exit(EXIT_SUCCESS);
     
     default:
-        for(int i = 1; i < mid; ++i)
-            printf("Side: %d, area: %d\n", atoi(argv[i]), calculate(atoi(argv[i])));
-        break;
+        printsq(argv, 1, mid);
+        wait(NULL);
+        exit(EXIT_SUCCESS);
     }
 }

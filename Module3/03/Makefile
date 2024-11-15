@@ -1,2 +1,4 @@
-all:
-	gcc main.c -o Phonebook
+all: phonebook
+
+phonebook:
+	gcc main.c pb.c -o phonebook

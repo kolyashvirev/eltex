@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 int main(int argc, char* argv[])
 {
@@ -25,10 +26,22 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
 
     case 0:
+        if (!close(pipefd[0]))
+        {
+            perror("Ошибка закрытия канала");
+            exit(EXIT_FAILURE);
+        }
+
         for(int i = 0; i < atoi(argv[1]); ++i)
         {
             int num = rand();
             write(pipefd[1], &num, sizeof(num));
+        }
+        
+        if (!close(pipefd[1]))
+        {
+            perror("Ошибка закрытия канала");
+            exit(EXIT_FAILURE);
         }
         exit(EXIT_SUCCESS);
     
@@ -40,6 +53,11 @@ int main(int argc, char* argv[])
                 perror("Ошибка открытия файла");
                 exit(EXIT_FAILURE);
             }
+            if (!close(pipefd[1]))
+            {
+                perror("Ошибка закрытия канала");
+                exit(EXIT_FAILURE);
+            }
 
             int num;
             for(int i = 0; i < atoi(argv[1]); ++i)
@@ -47,6 +65,21 @@ int main(int argc, char* argv[])
                 read(pipefd[0], &num, sizeof(num));
                 fprintf(file, "%d\n", num);
             }
+
+            if (!close(pipefd[0]))
+            {
+                perror("Ошибка закрытия канала");
+                exit(EXIT_FAILURE);
+            }
+
+            int status;
+            wait(&status);
+            if(!WIFEXITED(status))
+            {
+                perror("Ошибка завершения дочернего процесса");
+                exit(EXIT_FAILURE);
+            }
+
             exit(EXIT_SUCCESS);
         }
     }

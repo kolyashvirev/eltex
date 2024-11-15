@@ -28,11 +28,6 @@ int main(int argc, char* argv[])
     signal(SIGUSR1, sig1);
     signal(SIGUSR2, sig2);
 
-    // sigset_t* set;
-    // sigemptyset(&set);
-    // sigaddset(&set, SIGUSR2);
-    // int sig;
-
     pid_t pid;
     switch (pid = fork())
     {
@@ -44,7 +39,6 @@ int main(int argc, char* argv[])
         for(int i = 0; i < atoi(argv[1]); ++i)
         {
             while (fileAcc) sleep(0);
-            // sigwait(set, &sig);
 
             FILE* file = fopen(FILENAME, "r");
             if (file == NULL)
@@ -55,7 +49,7 @@ int main(int argc, char* argv[])
 
             printf("\n--------------------\n");
             int n;
-            while (fscanf(file, "%d", &n) != EOF)
+            while (fscanf(file, "%d", &n) != EOF || fileAcc)
                 printf("Прочитано дочерним процессом: %d\n", n);
 
             fclose(file);
@@ -70,7 +64,6 @@ int main(int argc, char* argv[])
     default:
         {
             sleep(0);
-
 
             int num;
             for(int i = 0; i < atoi(argv[1]); ++i)
