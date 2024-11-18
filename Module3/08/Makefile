@@ -5,7 +5,6 @@ compile:
 
 files:
 	touch numbers
-	touch semfile
 
 remove:
-	rm -rf main numbers semfile
+	rm -rf main numbers
