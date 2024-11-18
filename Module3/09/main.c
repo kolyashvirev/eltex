@@ -124,6 +124,9 @@ int main(int argc, char* argv[])
                 sleep(0);
             }
             wait(NULL);
+
+            semctl(semid, 0, IPC_RMID);
+
             exit(EXIT_SUCCESS);
         }
     }
