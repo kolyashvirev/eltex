@@ -7,50 +7,42 @@
 #include <unistd.h>
 #include <errno.h>
 
-#define MSG_SIZE 100
-#define MSG_TEXT_SIZE 100
+#define             MSG_SIZE    100
+#define             LOGIN_CODE  1
+#define             LOGIN_SUCC  "login"
+#define             MSG_CODE    2
+#define             LOGOUT_CODE 3
+#define             MSG_SRV     1
+#define             MAX_USERS   10
 
 
-#define LOGIN_CODE 1
-#define LOGIN_SUCC "login"
-#define MSG_CODE 2
-#define LOGOUT_CODE 3
-
-#define MSG_SRV 1
-
-#define MAX_USERS 10
-
-struct messagestr
+struct              messagestr
 {
-    long mtype;
-    char mtext[MSG_SIZE];
+    long            mtype;
+    char            mtext[MSG_SIZE];
 };
+
+void                errorHandling(char* message);
+
+pid_t mypid;
+char mypidchar[10];
+int                 msgid;
+struct messagestr   message;
 
 int main()
 {
-    pid_t mypid = getpid();
-    char mypidchar[10];
+    mypid = getpid();
     sprintf(mypidchar, "%d", mypid);
     printf("My pid: %d\n", mypid);
 
-    int user[MAX_USERS];
-    int counter = 0;
-
     key_t key = ftok(".queuef", 'a');
     if (key  == -1)
-    {
-        perror("Ошибка преобразования в key_t");
-        exit(EXIT_FAILURE);
-    }
+        errorHandling("Ошибка преобразования в key_t");
 
-    int msgid = msgget(key, S_IRWXU | S_IRWXG /*| S_IRWXO*/ | IPC_CREAT) ;
+    int msgid = msgget(key, S_IRWXU | S_IRWXG | IPC_CREAT) ;
     if (msgid == -1)
-    {
-        perror("Ошибка создания очереди сообщений");
-        exit(EXIT_FAILURE);
-    }
+        errorHandling("Ошибка создания очереди сообщений");
 
-    struct messagestr message;
 
     sprintf(message.mtext, "%c%s", LOGIN_CODE, mypidchar);
     message.mtype = MSG_SRV;
@@ -125,3 +117,10 @@ int main()
     
     exit(EXIT_SUCCESS);
 }
+
+void errorHandling(char* message)
+{
+    perror(message);
+    exit(EXIT_FAILURE);
+}
+
