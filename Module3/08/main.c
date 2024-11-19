@@ -55,8 +55,9 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    struct sembuf lock_res = {0, -1, 0};
-    struct sembuf rel_res = {0, 1, 0};
+    struct sembuf lock_res =    {0, -1, 0};
+    struct sembuf rel_res[] = { {0, 0, 0},
+                                {0, 1, 0}};
 
     pid_t pid;
     switch (pid = fork())
@@ -87,7 +88,7 @@ int main(int argc, char* argv[])
 
             int num = rand();
             write(pipefd[1], &num, sizeof(num));
-            semop(semid, &rel_res, 1);
+            semop(semid, rel_res, 2);
             sleep(0);
         }
         exit(EXIT_SUCCESS);
@@ -113,7 +114,7 @@ int main(int argc, char* argv[])
 
                 fclose(file);
 
-                semop(semid, &rel_res, 1);
+                semop(semid, rel_res, 2);
                 sleep(0);
             }
             wait(NULL);

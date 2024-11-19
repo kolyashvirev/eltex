@@ -60,7 +60,8 @@ int main(int argc, char* argv[])
     struct sembuf lock_read =   {0, -1, 0};
     struct sembuf rel_read =    {0, 1, 0};
     struct sembuf lock_write =  {0, -MAXPROCESSTOREAD, 0};
-    struct sembuf rel_write =   {0, MAXPROCESSTOREAD, 0};
+    struct sembuf rel_write[] = {{0, 0, 0},
+                                {0, MAXPROCESSTOREAD, 0}};
 
     pid_t pid;
     switch (pid = fork())
@@ -92,6 +93,11 @@ int main(int argc, char* argv[])
             int num = rand();
             write(pipefd[1], &num, sizeof(num));
             
+            if (semctl(semid, 0, GETVAL) >= MAXPROCESSTOREAD)
+            {
+                perror("Ошибка в работе семафора");
+                exit(EXIT_FAILURE);
+            }
             if (semop(semid, &rel_read, 1) == -1) perror("semop:rel_read");
             
             sleep(0);
@@ -119,7 +125,7 @@ int main(int argc, char* argv[])
 
                 fclose(file);
 
-                if (semop(semid, &rel_write, 1) == -1) perror("semop:rel_write");
+                if (semop(semid, rel_write, 2) == -1) perror("semop:rel_write");
 
                 sleep(0);
             }
