@@ -6,6 +6,8 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
+#define MAXPROCESSTOREAD 3
+
 int semid;
 static const char FILENAME[] = "numbers";
 
@@ -18,7 +20,7 @@ int main(int argc, char* argv[])
     }
 
     sem_unlink("semaphore");
-    sem_t* sem = sem_open("semaphore", O_CREAT, S_IRWXU | S_IRWXG, 1);
+    sem_t* sem = sem_open("semaphore", O_CREAT, S_IRWXU | S_IRWXG, MAXPROCESSTOREAD);
     if (sem == SEM_FAILED)
     {
         perror("sem_open");
@@ -64,7 +66,7 @@ int main(int argc, char* argv[])
             
             int val;
             sem_getvalue(sem, &val);
-            if(val >= 1)
+            if(val >= MAXPROCESSTOREAD)
             {
                 perror("Ошибка в работе семафора");
                 exit(EXIT_FAILURE);
@@ -78,32 +80,40 @@ int main(int argc, char* argv[])
     default:
         {
             sleep(0);
+
             int num;
-            
-            if (sem_wait(sem)) perror("sem_wait");
-
-            FILE* file = fopen(FILENAME, "a");
-            if(file == NULL)
+            for(int i = 0; i < atoi(argv[1]); ++i)
             {
-                perror("Ошибка открытия файла");
-                exit(EXIT_FAILURE);
+                for(int j = 0; j < MAXPROCESSTOREAD; ++j)
+                {
+                    if (sem_wait(sem)) perror("sem_wait");
+                }
+
+                FILE* file = fopen(FILENAME, "a");
+                if(file == NULL)
+                {
+                    perror("Ошибка открытия файла");
+                    exit(EXIT_FAILURE);
+                }
+
+                read(pipefd[0], &num, sizeof(num));
+                fprintf(file, "%d\n", num);
+
+                fclose(file);
+
+                for(int j = 0; j < MAXPROCESSTOREAD; ++j)
+                {
+                    if (sem_post(sem)) perror("sem_post");
+                }
+
+                sleep(0);
             }
+            wait(NULL);
 
-            read(pipefd[0], &num, sizeof(num));
-            fprintf(file, "%d\n", num);
+            sem_close(sem);
+            sem_unlink("semaphore");
 
-            fclose(file);
-
-  
-            if (sem_post(sem)) perror("sem_post");
-
-            sleep(0);
+            exit(EXIT_SUCCESS);
         }
-        wait(NULL);
-
-        sem_close(sem);
-        sem_unlink("semaphore");
-
-        exit(EXIT_SUCCESS);
     }
 }
