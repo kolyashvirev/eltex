@@ -1,0 +1,106 @@
+Layer2Switch-1, 2:
+enable
+configure terminal
+
+no vlan 100
+no vlan 200
+no vlan 300
+
+interface GigabitEthernet0/0
+switchport trunk encapsulation dot1q
+switchport mode access 
+switchport trunk native vlan 20
+exit
+
+interface GigabitEthernet0/2
+switchport trunk encapsulation dot1q
+switchport mode access 
+switchport trunk native vlan 20
+exit
+
+interface GigabitEthernet1/0
+switchport trunk encapsulation dot1q
+switchport mode access 
+switchport access  native vlan 20
+exit
+
+interface GigabitEthernet1/2
+switchport trunk encapsulation dot1q
+switchport mode access 
+switchport trunk native vlan 20
+exit
+
+
+interface GigabitEthernet0/1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 333
+exit
+
+interface GigabitEthernet0/3
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 333
+exit
+
+interface GigabitEthernet1/1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 333
+exit
+
+interface GigabitEthernet1/3
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 333
+exit
+
+
+Layer2Switch-3, 4, 5:
+enable
+configure terminal
+
+no vlan 100
+no vlan 200
+no vlan 300
+
+interface GigabitEthernet0/0
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 20
+exit
+
+interface GigabitEthernet0/2
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 20
+exit
+
+interface GigabitEthernet1/0
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 20
+exit
+
+
+interface GigabitEthernet0/1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 333
+exit
+
+interface GigabitEthernet0/3
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 333
+exit
+
+interface GigabitEthernet1/1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport trunk native vlan 333
+exit
+
+
+
+
